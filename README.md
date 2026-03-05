@@ -46,8 +46,30 @@ Sysmon logs initially failed to appear in Splunk.
 ### Resolving the Issue (Local System Privileges)
 ![Service Fix](screenshots/04_service_permissions_fix.png)
 
-## Phase 2: Attack, Detection & Threat Hunting (Upcoming)
-* Generate malicious traffic on the VM (RDP brute force, malware execution, registry modifications).
-* Analyze logs using SPL.
-* Build dashboards to track endpoint security status.
-* Configure automated alerts to detect compromise.
+## Phase 2: Attack, Detection & Threat Hunting
+
+### Scenario 1: Backdoor Account Creation & Privilege Escalation
+In this scenario, I simulated an attacker establishing persistence by creating a hidden local account and elevating its privileges to Administrator.
+
+* **Attack Execution (Red Team):** * Executed `net user hacker Password123! /add` to create a new backdoor account.
+  * Executed `net localgroup Administrateurs hacker /add` to grant the account full system privileges.
+* **Threat Hunting & Log Analysis (Blue Team):**
+  * Utilized SPL (Splunk Processing Language) to query the ingested Windows Security event logs.
+  * Successfully identified **Event ID 4720** (A user account was created) showing the exact timestamp and the compromised admin account used to create the backdoor.
+  * Correlated the event with **Event ID 4732** (A member was added to a security-enabled local group), proving the `hacker` account was added to the `Administrators` group.
+* **Detection Engineering:**
+  * Created a real-time critical Splunk alert: `[CRITICAL] User Added to Administrators Group`.
+  * Mapped the detection to the MITRE ATT&CK framework: **T1098 (Account Manipulation)**.
+
+#### Analyst Notes (Defense in Depth)
+* Initially searched for Sysmon Event ID 1 (Process Creation) to track the command execution. Encountered parsing challenges in Splunk due to the XML rendering configuration (`renderXml = 1`).
+* Successfully pivoted to Windows Native Security logs as a fallback, demonstrating the critical importance of log redundancy and Defense in Depth in a SOC environment.
+
+#### Visualizing the Attack Lifecycle
+![Red Team Execution](screenshots/05_redteam_backdoor_creation.png)
+![Account Created 4720](screenshots/06_splunk_event_4720_account_created.png)
+![Privilege Escalation 4732](screenshots/07_splunk_event_4732_privilege_escalation.png)
+![Critical Alert Configuration](screenshots/08_splunk_critical_alert_configured.png)
+
+### Scenario 2: Advanced Execution (Upcoming)
+* Generate malicious traffic using PowerShell and other Living-off-the-Land Binaries (LOLBas).
