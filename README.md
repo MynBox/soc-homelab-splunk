@@ -85,3 +85,18 @@ In this scenario, I simulated a common malware behavior: using native OS tools t
 
 #### Visualizing the Threat
 ![PowerShell Payload Download](screenshots/09_splunk_sysmon_powershell_download.png)
+### Scenario 3: Local Authentication Brute Force & Data Visualization
+In this scenario, I simulated a local brute-force attack to test Windows authentication logging and created a visualization dashboard for SOC monitoring.
+
+* **Attack Execution (Red Team):** Intentionally failed multiple login attempts on the Windows lock screen to trigger the Windows Account Lockout/Delay mechanism.
+* **Threat Hunting & Log Analysis (Blue Team):**
+  * Queried Splunk for **Event ID 4625** (An account failed to log on).
+  * Identified the targeted accounts and the volume of failed attempts.
+* **Detection Engineering & Visualization:**
+  * Used Splunk's SPL `stats count by Nom_du_compte` command to aggregate failed logins.
+  * Built a custom **SOC Dashboard** featuring a Pie Chart to visualize the most targeted accounts in real-time.
+  * Mapped to MITRE ATT&CK framework: **T1110 (Brute Force)**.
+
+#### Visualizing the Brute Force Attack
+![Windows Bruteforce Lock](screenshots/10_windows_bruteforce_lock.png)
+![SOC Dashboard](screenshots/11_splunk_bruteforce_dashboard.png)
