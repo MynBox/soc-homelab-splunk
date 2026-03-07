@@ -13,7 +13,7 @@ A local SOC lab built with Splunk and Sysmon to collect logs and detect threats 
 ---
 
 ## Continuous Improvement & Peer Review (Mid-Lab Adjustments)
-During the progression of this lab, I received valuable feedback from a Senior Analyst (M. Perticoz), which led to two major architectural and operational pivots:
+During the progression of this lab, I received valuable feedback from M. Perticoz, which led to two major architectural and operational pivots:
 
 1. **Log Localization & Field Names:** During Phase 1, the Windows OS was configured in French, resulting in localized Splunk fields in my initial screenshots (e.g., `Nom_du_compte` instead of `Account_Name`). Acknowledging that this breaks compatibility with global detection rules, **I transitioned the OS language to English midway through the lab** to ensure standard field mapping for an international SOC environment.
 2. **Enterprise-Grade SPL Optimization:** Initially, I used broad queries like `index=*` for quick lab validation. Following M. Perticoz's feedback regarding SIEM performance and compute costs in real-world environments, **I optimized all subsequent threat hunting queries** by strictly specifying indexes and sourcetypes (e.g., `index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"`).
