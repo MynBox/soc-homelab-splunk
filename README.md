@@ -10,6 +10,16 @@ A local SOC lab built with Splunk and Sysmon to collect logs and detect threats 
 * **Telemetry:** Microsoft Sysmon (SwiftOnSecurity configuration)
 * **Network:** Local communication via port `9997`
 
+---
+
+## Continuous Improvement & Peer Review (Mid-Lab Adjustments)
+During the progression of this lab, I received valuable feedback from a Senior Analyst (M. Perticoz), which led to two major architectural and operational pivots:
+
+1. **Log Localization & Field Names:** During Phase 1, the Windows OS was configured in French, resulting in localized Splunk fields in my initial screenshots (e.g., `Nom_du_compte` instead of `Account_Name`). Acknowledging that this breaks compatibility with global detection rules, **I transitioned the OS language to English midway through the lab** to ensure standard field mapping for an international SOC environment.
+2. **Enterprise-Grade SPL Optimization:** Initially, I used broad queries like `index=*` for quick lab validation. Following M. Perticoz's feedback regarding SIEM performance and compute costs in real-world environments, **I optimized all subsequent threat hunting queries** by strictly specifying indexes and sourcetypes (e.g., `index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"`).
+
+---
+
 ## Phase 1: Infrastructure Deployment & Visibility (Completed)
 Set up the SOC foundation to get full visibility into the target machine.
 
@@ -45,6 +55,8 @@ Sysmon logs initially failed to appear in Splunk.
 
 ### Resolving the Issue (Local System Privileges)
 ![Service Fix](screenshots/04_service_permissions_fix.png)
+
+---
 
 ## Phase 2: Attack, Detection & Threat Hunting
 
@@ -85,6 +97,7 @@ In this scenario, I simulated a common malware behavior: using native OS tools t
 
 #### Visualizing the Threat
 ![PowerShell Payload Download](screenshots/09_splunk_sysmon_powershell_download.png)
+
 ### Scenario 3: Local Authentication Brute Force & Data Visualization
 In this scenario, I simulated a local brute-force attack to test Windows authentication logging and created a visualization dashboard for SOC monitoring.
 
@@ -93,10 +106,12 @@ In this scenario, I simulated a local brute-force attack to test Windows authent
   * Queried Splunk for **Event ID 4625** (An account failed to log on).
   * Identified the targeted accounts and the volume of failed attempts.
 * **Detection Engineering & Visualization:**
-  * Used Splunk's SPL `stats count by Nom_du_compte` command to aggregate failed logins.
+  * Used Splunk's SPL `stats count by Account_Name` command to aggregate failed logins.
   * Built a custom **SOC Dashboard** featuring a Pie Chart to visualize the most targeted accounts in real-time.
   * Mapped to MITRE ATT&CK framework: **T1110 (Brute Force)**.
 
 #### Visualizing the Brute Force Attack
 ![Windows Bruteforce Lock](screenshots/10_windows_bruteforce_lock.png)
 ![SOC Dashboard](screenshots/11_splunk_bruteforce_dashboard.png)
+
+### Scenario 4: "The Silent Startup" (Registry Persistence) - UPCOMING
