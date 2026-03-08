@@ -114,4 +114,12 @@ In this scenario, I simulated a local brute-force attack to test Windows authent
 ![Windows Bruteforce Lock](screenshots/10_windows_bruteforce_lock.png)
 ![SOC Dashboard](screenshots/11_splunk_bruteforce_dashboard.png)
 
-### Scenario 4: "The Silent Startup" (Registry Persistence) - UPCOMING
+### Scenario 4: "The Silent Startup" (Registry Persistence & Masquerading)
+In this scenario, I simulated advanced malware persistence by modifying the Registry Run keys. To avoid human detection, the registry value was named `SecurityHealthUpdater` (Masquerading).
+
+* **Attack Execution (Red Team):** Executed a PowerShell command (`Set-ItemProperty`) to add a malicious payload path to the `HKCU\...\CurrentVersion\Run` key.
+* **Detection Engineering:** Monitored critical registry modifications using **Sysmon Event ID 13 (Registry value set)**. Mapped to **T1547.001 (Registry Run Keys / Startup Folder)** and **T1036 (Masquerading)**.
+
+#### Splunk Detection Query (SPL)
+```spl
+index=* source="*Sysmon*" "SecurityHealthUpdater"
