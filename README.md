@@ -119,6 +119,7 @@ In this scenario, I simulated an advanced malware persistence mechanism by modif
 
 * **Attack Execution (Red Team):** Simulating malware behavior, I used PowerShell to create a persistence mechanism in the current user's Registry hive.
 * **Threat Hunting & Log Analysis (Blue Team):** While initially difficult to parse via specific fields due to lab limitations, the event was successfully identified using raw keyword hunting in Splunk.
+
 ![Registry Persistence Stealth](screenshots/12_splunk_registry_stealth.png)
 #### Splunk Detection Query (SPL)
 ```spl
