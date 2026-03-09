@@ -115,11 +115,14 @@ In this scenario, I simulated a local brute-force attack to test Windows authent
 ![SOC Dashboard](screenshots/11_splunk_bruteforce_dashboard.png)
 
 ### Scenario 4: "The Silent Startup" (Registry Persistence & Masquerading)
-In this scenario, I simulated advanced malware persistence by modifying the Registry Run keys. To avoid human detection, the registry value was named `SecurityHealthUpdater` (Masquerading).
+In this scenario, I simulated an advanced malware persistence mechanism by modifying the Windows Registry Run keys. To evade human detection, the registry value was disguised using a legitimate-sounding name (Masquerading).
 
-* **Attack Execution (Red Team):** Executed a PowerShell command (`Set-ItemProperty`) to add a malicious payload path to the `HKCU\...\CurrentVersion\Run` key.
-* **Detection Engineering:** Monitored critical registry modifications using **Sysmon Event ID 13 (Registry value set)**. Mapped to **T1547.001 (Registry Run Keys / Startup Folder)** and **T1036 (Masquerading)**.
-
+* **Attack Execution (Red Team):** Simulating malware behavior, I used PowerShell to create a persistence mechanism in the current user's Registry hive.
+* **Threat Hunting & Log Analysis (Blue Team):** While initially difficult to parse via specific fields due to lab limitations, the event was successfully identified using raw keyword hunting in Splunk.
+![Registry Persistence Stealth](screenshots/12_splunk_registry_stealth.png)
 #### Splunk Detection Query (SPL)
 ```spl
 index=* source="*Sysmon*" "SecurityHealthUpdater"
+
+> Analyst Note: In this vanilla lab environment (without the full Splunk Add-on for Windows parser), native XML fields were not automatically extracted at index-time. Therefore, I utilized raw keyword hunting to successfully identify the malicious registry modification (Event ID 13) and trace the payload execution path directly within the raw XML event body.
+
